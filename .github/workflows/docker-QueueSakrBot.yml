@@ -16,9 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
    
-    - name: Build and Publish Tag Docker image
-      uses: VaultVulp/gp-docker-action@1.6.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }} 
-        image-name: my-cool-service
-        image-tag: latest
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "D1xer228" --password-stdin
+
+    - name: Build Docker image
+      run: |
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
+
+    - name: Push Docker image to GitHub Packages
+      run: |
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
