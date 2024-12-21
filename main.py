@@ -225,21 +225,32 @@ def show_teacher_menu(message):
     bot.send_message(message.chat.id, "Режим преподавателя. Выберите действие:", reply_markup=markup)
 
 
-@bot.message_handler(
-    func=lambda message: user_mode.get(message.chat.id) == "Преподаватель" and message.text == "Показать очередь")
-def show_teacher_queue(message):
-    current_day = datetime.datetime.now().strftime('%A').lower()
-    queue_str = "\n".join(
-        f"{subject}: {', '.join(names)}" for subject, names in queues[current_day].items()) or "Очередь пуста."
-    bot.send_message(message.chat.id, f"Очередь на сегодня:\n{queue_str}")
+def show_teacher_menu(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.KeyboardButton("Показать очередь"), types.KeyboardButton("Удалить студента"))
+    markup.add(types.KeyboardButton("Вернуться назад"))
+    bot.send_message(message.chat.id, "Выберите действие:", reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.text == "Удалить студента")
+def ask_for_student_name_to_remove(message):
+    bot.send_message(message.chat.id, "Введите имя студента, которого хотите удалить из очереди:")
+    bot.register_next_step_handler(message, remove_student_from_queue)
+
+def remove_student_from_queue(message):
+    student_name_to_remove = message.text
+    removed = False
+    for day, queue in queues.items():
+        for lesson, students in queue.items():
+            if student_name_to_remove in students:
+                students.remove(student_name_to_remove)
+                removed = True
+                save_queues()
+                break
+    if removed:
+        bot.send_message(message.chat.id, f"Студент {student_name_to_remove} удален из очереди.")
+    else:
+        bot.send_message(message.chat.id, f"Студент {student_name_to_remove} не найден в очереди.")
     show_teacher_menu(message)
-
-
-@bot.message_handler(func=lambda message: user_mode.get(message.chat.id) == "Преподаватель" and message.text.startswith(
-    "Удалить из очереди"))
-def remove_from_queue(message):
-    # Логика удаления студента из очереди
-    pass  # Реализуйте логику удаления студента из очереди
 
 
 # Запуск бота
