@@ -5,7 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+permissions:
+  packages: write
 jobs:
 
   build:
@@ -14,5 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag queue-sakr-bot:$(latest)
+   
+    - name: Build and Publish Tag Docker image
+      uses: DrSkunk/gp-docker-action@1.1.9
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }} 
+        image-name: my-cool-service
