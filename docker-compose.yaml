@@ -1,9 +1,9 @@
-name: test-bot
+name: sakr-queue
 
 services:
   bot:
-    build: .
-    image: test-bot
+    container_name: sakr-queue-bot
+    image: '${IMAGE_NAME:-ghcr.io/d1xer228/queue-sakr-bot}'
     ports:
       - "8080:8080"
     volumes:
