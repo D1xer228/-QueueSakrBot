@@ -8,10 +8,10 @@ import datetime
 
 from utils import map_lesson_name_to_subject
 
-API_TOKEN = ''  # Замените на свой токен
+API_TOKEN = os.environ.get('BOT_TOKEN')  # Замените на свой токен
 bot = telebot.TeleBot(API_TOKEN)
 
-client = http.client.HTTPSConnection("user.env")
+client = http.client.HTTPSConnection(os.environ.get('APP_HOST'))
 
 
 # Получение расписания
