@@ -3,14 +3,16 @@ import os
 import json
 import telebot
 from telebot import types
+from telebot import apihelper
 from collections import defaultdict
 import datetime
 
 from utils import map_lesson_name_to_subject
 
+apihelper.API_URL = os.environ.get('BOT_API')
+
 API_TOKEN = os.environ.get('BOT_TOKEN')  # Замените на свой токен
 bot = telebot.TeleBot(API_TOKEN)
-
 client = http.client.HTTPSConnection(os.environ.get('APP_HOST'))
 
 
